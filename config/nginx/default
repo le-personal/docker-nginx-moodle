@@ -1,0 +1,40 @@
+server {
+	listen 80 default_server; # IPv4
+	# listen [fe80::202:b3ff:fe1e:8328]:80 default_server ipv6only=on; # IPv6
+  server_name _;
+
+	limit_conn arbeit 32;
+
+  ## Access and error logs.
+	access_log /var/log/supervisor/nginx-access.log;
+  error_log /var/log/supervisor/nginx-error.log;
+
+  ## Filesystem root of the site and index.
+  root /var/www;
+  index index.php;
+  fastcgi_keep_conn on; # keep alive to the FCGI upstream
+
+
+
+  location / {
+    # First attempt to serve request as file
+    try_files $uri $uri/index.php;
+    
+    # moodle rewrite rules
+    rewrite ^/(.*.php)(/)(.*)$ /$1?file=/$3 last;
+  }
+
+  # php parsing
+  location ~ .php$ {
+    try_files $uri =404;
+    fastcgi_pass unix:/var/run/php-fpm.sock;
+    fastcgi_index index.php;
+    fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    include fastcgi_params;
+    fastcgi_buffer_size 128k;
+    fastcgi_buffers 256 4k;
+    fastcgi_busy_buffers_size 256k;
+    fastcgi_temp_file_write_size 256k;
+  }
+
+}
