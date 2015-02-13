@@ -15,10 +15,11 @@ RUN apt-get update && apt-get dist-upgrade -y
 RUN echo '#!/bin/sh\nexit 101' > /usr/sbin/policy-rc.d && chmod +x /usr/sbin/policy-rc.d
 
 # Basic packages
-RUN apt-get -y install php5-xmlrpc php5-Intl php5-fpm php5-mysql php-apc php5-imagick php5-imap php5-mcrypt php5-curl php5-cli php5-gd php5-pgsql php5-sqlite php5-common php-pear curl php5-json php5-redis php5-memcache 
+RUN apt-get -y install php5-xmlrpc php5-Intl php5-fpm php5-mysql php5-imagick php5-imap php5-mcrypt php5-curl php5-cli php5-gd php5-pgsql php5-sqlite php5-common php-pear curl php5-json php5-redis php5-memcache 
 RUN apt-get -y install nginx-extras git curl supervisor
 
 RUN php5enmod mcrypt
+RUN php5enmod opcache
 
 RUN /usr/bin/curl -sS https://getcomposer.org/installer | /usr/bin/php
 RUN /bin/mv composer.phar /usr/local/bin/composer
